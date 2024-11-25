@@ -5,13 +5,13 @@
 -- DROP TABLE public.categories;
 
 CREATE TABLE public.categories (
-	id serial4 NOT NULL,
-	description text DEFAULT ''::text NOT NULL, -- The description given to the category.
-	"name" text DEFAULT 'None'::text NOT NULL, -- The defined name of the category.
-	"color" int4 DEFAULT 1 NOT NULL, -- The foreign key to the category_colors table.
-	is_user_defined bool DEFAULT true NOT NULL,
-	CONSTRAINT categories_pkey PRIMARY KEY (id),
-	CONSTRAINT categories_unique UNIQUE (name)
+    id serial4 NOT NULL,
+    description text DEFAULT ''::text NOT NULL, -- The description given to the category.
+    "name" text DEFAULT 'None'::text NOT NULL, -- The defined name of the category.
+    "color" int4 DEFAULT 1 NOT NULL, -- The foreign key to the category_colors table.
+    is_user_defined bool DEFAULT true NOT NULL,
+    CONSTRAINT categories_pkey PRIMARY KEY (id),
+    CONSTRAINT categories_unique UNIQUE (name)
 );
 COMMENT ON TABLE public.categories IS 'This table holds the system default and user created categories.';
 
