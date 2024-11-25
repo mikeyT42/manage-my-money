@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Manage My Money</title>
+        <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+        <link rel="stylesheet" type="text/css" href="/manage-my-money/static/styles.css"/>
+    </head>
+    <body class="mt-8 mb-4 mx-10 dark:bg-black dark:text-slate-100">
+        <main>
+            <header>
+                <h1 class="flex justify-center mb-4 text-4xl font-extrabold">Manage My Money</h1>
+                <nav class="grid grid-flow-col-dense justify-items-center">
+                    <a href="/manage-my-money/categorize-transactions" class="text-lg font-semibold">Categorize Transactions</a>
+                    <a href="/manage-my-money/customize-categories" class="text-lg font-semibold">Customize Categories</a>
+                </nav>
+            </header>
+            <section name="summaries-section" class="flex flex-col gap-y-12 mt-10 border rounded-lg dark:border-slate-800
+                dark:bg-slate-800 p-10">
+                <div id="date-picker" class="place-self-center">
+                    <form class="flex gap-x-[10px] items-center"
+                        hx-get="/manage-my-money/get-summaries"
+                        hx-target="#summaries"
+                        hx-swap="innerHTML"
+                        hx-trigger="change from:#month, change from:#year">
+                        <button id="decrement-month" hx-trigger="click consume"
+                            class="flex flex-col justify-center place-items-end h-[45px] w-[45px]"
+                            hx-on:click="decrementMonth(htmx.find(htmx.closest(this, '#date-picker form'), '#month'))">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                class="w-6 h-6 hover:w-8 hover:h-8 button-hover">
+                              <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-4.28 9.22a.75.75 0 0 0 0 1.06l3 3a.75.75 0 1 0 1.06-1.06l-1.72-1.72h5.69a.75.75 0 0 0 0-1.5h-5.69l1.72-1.72a.75.75 0 0 0-1.06-1.06l-3 3Z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                        <select id="month" name="month"
+                            class="px-2 py-1 h-8 rounded-md dark:text-slate-600 dark:bg-slate-200 ring-1 ring-inset hover:ring-blue-500
+                            hover:ring-2">
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                        <select id="year" name="year"
+                            class="px-2 py-1 h-8 rounded-md dark:text-slate-600 dark:bg-slate-200 ring-1 ring-inset ring-slate-400
+                            hover:ring-blue-500 hover:ring-2">
+                        </select>
+                        <button id="increment-month" hx-trigger="click consume" class="h-[45px] w-[45px]"
+                            hx-on:click="incrementMonth(htmx.find(htmx.closest(this, '#date-picker form'), '#month'))">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                class="w-6 h-6 hover:w-8 hover:h-8 button-hover">
+                              <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm4.28 10.28a.75.75 0 0 0 0-1.06l-3-3a.75.75 0 1 0-1.06 1.06l1.72 1.72H8.25a.75.75 0 0 0 0 1.5h5.69l-1.72 1.72a.75.75 0 1 0 1.06 1.06l3-3Z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+                <div id="summaries" class="flex flex-col gap-y-14"
+                    hx-get="/manage-my-money/get-summaries"
+                    hx-target="this"
+                    hx-swap="outerHTML"
+                    hx-trigger="load"
+                    hx-include="#date-picker form [name='month'], #date-picker form [name='year']"
+                    ></div>
+            </section>
+        </main>
+    </body>
+<style>
+.button-hover {
+   transition-property: height, width;
+   transition-duration: 190ms;
+   transition-timing-function: linear;
+}
+</style>
+<script>
+let yearSelect = document.querySelector('#date-picker form #year');
+populateYears(yearSelect);
+let monthSelect = document.querySelector('#date-picker form #month');
+selectThisMonth(monthSelect);
+
+function populateYears(yearSelect) {
+    const date = new Date();
+    const year = date.getFullYear();
+
+    for (let i = 0; i <= 5; i++) {
+        let option = document.createElement('option');
+        option.textContent = year-i;
+        yearSelect.appendChild(option);
+    }
+}
+
+function selectThisMonth(monthSelect) {
+    const date = new Date();
+    const month = date.getMonth() + 1;
+
+    monthSelect.value = month;
+}
+
+function decrementMonth(monthSelect) {
+    const currentMonth = Number(monthSelect.value);
+    let decMonth = currentMonth - 1;
+    if (decMonth == 0) {
+        decMonth = 12;
+    }
+
+    monthSelect.value = decMonth;
+    htmx.trigger(monthSelect, "change", undefined);
+}
+
+function incrementMonth(monthSelect) {
+    const currentMonth = Number(monthSelect.value);
+    let incMonth = currentMonth + 1;
+    if (incMonth == 13) {
+        incMonth = 1;
+    }
+
+    monthSelect.value = incMonth;
+    htmx.trigger(monthSelect, "change", undefined);
+}
+</script>
+</html>

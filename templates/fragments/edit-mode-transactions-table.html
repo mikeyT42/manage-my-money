@@ -1,0 +1,83 @@
+<div id="transactions" hx-get="/manage-my-money/edit-mode-transactions?page=1"
+    hx-target="this" hx-swap="outerHTML" hx-trigger="bankstatement-upload from:body">
+    <table class="table-auto p-3 border border-separate border-spacing-2 rounded-lg dark:border-slate-500 dark:bg-slate-800">
+        <thead class="dark:bg-slate-700">
+            <tr>
+                <th class="border px-3 py-1 dark:border-slate-600 font-semibold rounded"
+                    >Amount</th>
+                <th class="border px-3 py-1 dark:border-slate-600 font-semibold rounded"
+                    >Bank Description</th>
+                <th class="border px-3 py-1 dark:border-slate-600 font-semibold rounded"
+                    >User Description</th>
+                <th class="border px-3 py-1 dark:border-slate-600 font-semibold rounded"
+                    >Date</th>
+                <th class="border px-3 py-1 dark:border-slate-600 font-semibold rounded"
+                    >Category Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{ range $index, $transaction := .Transactions }}
+            <form hx-post="/manage-my-money/update-transaction" hx-target="this" hx-swap="none"
+                hx-trigger="blur from:#user-description-{{$index}}, change from:#category-{{$index}}, change from:#date-{{$index}}">
+                <tr>
+                    <td style="display: none">
+                        <input name="transaction-id" value="{{ $transaction.Id }}"/>
+                    </td>
+                    <td class="border dark:border-slate-500 rounded px-3 py-1 dark:text-slate-300 dark:bg-slate-600"
+                        >
+                        {{ if ge $transaction.Amount.ToFloat 0.0 }}
+                            {{ printf "$%.2f" $transaction.Amount.Abs }}
+                        {{ else }}
+                            {{ printf "-$%.2f" $transaction.Amount.Abs }}
+                        {{ end }}
+                    </td>
+                    <td class="border dark:border-slate-500 rounded px-3 py-1 dark:text-slate-300 dark:bg-slate-600"
+                        >{{ $transaction.BankDescription }}</td>
+                    <td class="border dark:border-slate-500 rounded px-3 py-1 dark:text-slate-300 dark:bg-slate-600">
+                        <input id="user-description-{{$index}}" name="user-description" type="text" placeholder="User Description"
+                        class="px-4 py-2 rounded-sm dark:placeholder:text-slate-400 dark:text-slate-600 dark:bg-slate-300"
+                        value="{{ $transaction.UserDescription }}">
+                    </td>
+                    <td class="border dark:border-slate-500 rounded px-3 py-1 dark:text-slate-300 dark:bg-slate-600">
+                        <input id="date-{{$index}}" name="date" type="date" value='{{ $transaction.Date.Format "2006-01-02" }}'
+                            class="px-2 py-1 rounded-md dark:text-slate-600 dark:bg-slate-200">
+                    </td>
+                    <td class="border dark:border-slate-500 rounded px-3 py-1 dark:text-slate-300 dark:bg-slate-600"
+                        >
+                        <select id="category-{{$index}}" name="category"
+                            class="px-2 py-1 rounded-md dark:text-slate-600 dark:bg-slate-200 capitalize">
+                            {{ range $index1, $category := $.Categories }}
+                            {{ if eq $transaction.CategoryId $category.Id }}
+                            <option selected value="{{ $category.Id }}">{{ $category.Name }}</option>
+                            {{ else }}
+                            <option value="{{ $category.Id }}">{{ $category.Name }}</option>
+                            {{ end }}
+                            {{ end }}
+                        </select>
+                    </td>
+                </tr>
+            </form>
+            {{ end }}
+        </tbody>
+    </table>
+</div>
+<div id="transactions-pagination" hx-swap-oob="true" class="flex justify-center">
+    <button hx-get="/manage-my-money/edit-mode-transactions?page={{ .PaginationState.Previous }}" hx-target="#transactions"
+        class="flex flex-col justify-center place-items-end h-[45px] w-[45px] disabled:cursor-not-allowed 
+        *:enabled:hover:w-8 *:enabled:hover:h-8 " hx-swap="innerHTML"
+        {{ if .PaginationState.DisabledPrevious }} disabled {{ end }}>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+            class="w-6 h-6 button-hover">
+          <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-4.28 9.22a.75.75 0 0 0 0 1.06l3 3a.75.75 0 1 0 1.06-1.06l-1.72-1.72h5.69a.75.75 0 0 0 0-1.5h-5.69l1.72-1.72a.75.75 0 0 0-1.06-1.06l-3 3Z" clip-rule="evenodd" />
+        </svg>
+    </button>
+    <button hx-get="/manage-my-money/edit-mode-transactions?page={{ .PaginationState.Next }}" hx-target="#transactions"
+        class="flex flex-col justify-center place-items-end h-[45px] w-[45px] disabled:cursor-not-allowed 
+        *:enabled:hover:w-8 *:enabled:hover:h-8 " hx-swap="innerHTML"
+        {{ if .PaginationState.DisabledNext }} disabled {{ end }}>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+            class="w-6 h-6 button-hover">
+          <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm4.28 10.28a.75.75 0 0 0 0-1.06l-3-3a.75.75 0 1 0-1.06 1.06l1.72 1.72H8.25a.75.75 0 0 0 0 1.5h5.69l-1.72 1.72a.75.75 0 1 0 1.06 1.06l3-3Z" clip-rule="evenodd" />
+        </svg>
+    </button>
+</div>

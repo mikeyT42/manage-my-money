@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Manage My Money</title>
+        <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+        <link rel="stylesheet" type="text/css" href="/manage-my-money/static/styles.css"/>
+    </head>
+    <body class="mt-8 mb-4 mx-10 dark:bg-black dark:text-slate-100">
+        <main>
+            <header>
+                <h1 class="flex justify-center mb-4 text-4xl font-extrabold">Categorize Transactions</h1>
+                <nav class="grid grid-flow-col-dense justify-items-center">
+                    <a href="/manage-my-money" class="text-lg font-semibold">Home</a>
+                    <a href="/manage-my-money/customize-categories" class="text-lg font-semibold">Customize Categories</a>
+                </nav>
+            </header>
+            <section id="file-upload-section" class="my-4 flex gap-[100px] place-content-center">
+                <form class="grid grid-rows-3 grid-flow-col gap-4 p-4 dark:bg-slate-800 rounded-lg" hx-encoding="multipart/form-data" hx-post="/manage-my-money/upload">
+                    <label for="upload-file" class="justify-self-center text-lg font-semibold">Upload Bank Statement</label>
+                    <input class=""
+                    id="upload-file"
+                    type="file"
+                    name="statement-upload"
+                    accept=".csv">
+                    <button type="submit"
+                        class="dark:bg-slate-500 hover:dark:bg-slate-600 dark:text-white py-1 px-2 rounded-sm">Upload</button>
+                </form>
+                <div class="self-end" hx-trigger="read-mode-button from:body" hx-target="this" hx-swap="outerHTML"
+                    hx-get="/manage-my-money/read-mode-button">
+                    <button id="edit-mode" class="dark:bg-slate-500 hover:dark:bg-slate-600 dark:text-white py-1 px-2 rounded-sm"
+                        hx-get="/manage-my-money/edit-mode-transactions?page=1" hx-target="#transactions" hx-swap="outerHTML"
+                        >Edit Mode</button>
+                </div>
+            </section>
+            <section id="transactions-table-section" class="flex justify-center flex-col">
+                <!--
+                <div id="transactions-search" class="flex flex-initial">
+
+                </div>
+                -->
+                <div id="transactions" class="flex justify-center" hx-get="/manage-my-money/read-mode-transactions?page=1"
+                    hx-target="this" hx-swap="outerHTML" hx-trigger="load">
+                </div>
+                <div id="transactions-pagination" class="flex justify-center">
+                </div>
+            </section>
+        </main>
+    </body>
+<style>
+.button-hover {
+   transition-property: height, width;
+   transition-duration: 190ms;
+   transition-timing-function: linear;
+}
+</style>
+</html>

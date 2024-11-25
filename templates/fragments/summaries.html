@@ -1,0 +1,206 @@
+<div id="summaries" class="flex flex-col gap-y-14">
+    {{ range . }}
+    <div id="summary" class="flex flex-col w-[550px] self-center">
+        <div name="graph-container" class="z-10 flex flex-row px-5 py-2 border rounded-lg dark:border-slate-500 dark:bg-slate-600">
+            <div name="button-and-category" class="flex flex-col mr-5 ml-5 justify-between basis-1/12">
+                <button>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                        class="w-6 h-6 dropdown-rotate up"
+                        hx-on:click="
+                            if(this.classList.contains('up')) {
+                                htmx.removeClass(this, 'up');
+                                htmx.addClass(this, 'down');
+                                let dropdown = htmx.find(htmx.closest(this, '#summary'), '#budgetted-amount-form');
+                                htmx.removeClass(dropdown, 'dropdown-slide-up');
+                                htmx.addClass(dropdown, 'dropdown-slide-down');
+                            } else {
+                                htmx.removeClass(this, 'down');
+                                htmx.addClass(this, 'up');
+                                const dropdown = htmx.find(htmx.closest(this, '#summary'), '#budgetted-amount-form');
+                                htmx.removeClass(dropdown, 'dropdown-slide-down');
+                                htmx.addClass(dropdown, 'dropdown-slide-up');
+                            }"
+                        >
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                    </svg>
+                </button>
+                <label>{{ .CategoryName }}</label>
+            </div>
+            <canvas id="graph-canvas" class="h-[80px] w-[380px] self-center" height="80" width="380"></canvas>
+        </div>
+        <div id="budgetted-amount-form"
+            class="z-0 flex place-items-center justify-center self-center border rounded-b-lg dark:border-slate-500 dark:bg-slate-600
+                dropdown-slide-up">
+            <form id="budget-amount-form" class="flex"
+                hx-post="/manage-my-money/update-summary"
+                hx-include="#date-picker form [name='month'], #date-picker form [name='year']"
+                hx-target="this"
+                hx-swap="none"
+                hx-on:htmx:after-request="drawHorizontalBarGraph(
+                    htmx.find(htmx.closest(this, '#summary'), '#graph-canvas'),
+                    htmx.find(this, '#sum').textContent,
+                    htmx.find(this, '#amount').value
+                )"
+                >
+                <input style="display: none" name="category-id" value="{{ .CategoryId }}">
+                <input style="display: none" name="has-summary" value="{{ .HasSummary }}">
+                <div class="flex place-items-center pl-[10px] p-1 rounded-lg dark:bg-slate-500 ring-1 ring-slate-400
+                    focus-within:ring-blue-500 focus-within:ring-2 ring-inset">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                        <path d="M10.75 10.818v2.614A3.13 3.13 0 0 0 11.888 13c.482-.315.612-.648.612-.875 0-.227-.13-.56-.612-.875a3.13 3.13 0 0 0-1.138-.432ZM8.33 8.62c.053.055.115.11.184.164.208.16.46.284.736.363V6.603a2.45 2.45 0 0 0-.35.13c-.14.065-.27.143-.386.233-.377.292-.514.627-.514.909 0 .184.058.39.202.592.037.051.08.102.128.152Z" />
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-6a.75.75 0 0 1 .75.75v.316a3.78 3.78 0 0 1 1.653.713c.426.33.744.74.925 1.2a.75.75 0 0 1-1.395.55 1.35 1.35 0 0 0-.447-.563 2.187 2.187 0 0 0-.736-.363V9.3c.698.093 1.383.32 1.959.696.787.514 1.29 1.27 1.29 2.13 0 .86-.504 1.616-1.29 2.13-.576.377-1.261.603-1.96.696v.299a.75.75 0 1 1-1.5 0v-.3c-.697-.092-1.382-.318-1.958-.695-.482-.315-.857-.717-1.078-1.188a.75.75 0 1 1 1.359-.636c.08.173.245.376.54.569.313.205.706.353 1.138.432v-2.748a3.782 3.782 0 0 1-1.653-.713C6.9 9.433 6.5 8.681 6.5 7.875c0-.805.4-1.558 1.097-2.096a3.78 3.78 0 0 1 1.653-.713V4.75A.75.75 0 0 1 10 4Z" clip-rule="evenodd" />
+                    </svg>
+                    <input name="amount" id="amount" type="number" step="0.01" placeholder="0.00"
+                        class="px-2 py-2 w-28 h-10 focus:outline-none dark:placeholder:text-slate-400 dark:text-slate-300
+                            dark:bg-slate-500"
+                        {{ if gt .BudgetAmount 0.0 }}
+                        value="{{ .BudgetAmount }}"
+                        {{ end }}
+                        >
+                </div>
+                <button name="submit" id="submit" type="submit"
+                    class="self-center mx-4 px-3 py-0.5 rounded-xl dark:bg-slate-500 ring-1 ring-inset ring-slate-400
+                    hover:ring-blue-500 hover:ring-2">Submit</button>
+                <div class="flex place-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                        <path fill-rule="evenodd" d="M1 4a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4Zm12 4a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM4 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm13-1a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM1.75 14.5a.75.75 0 0 0 0 1.5c4.417 0 8.693.603 12.749 1.73 1.111.309 2.251-.512 2.251-1.696v-.784a.75.75 0 0 0-1.5 0v.784a.272.272 0 0 1-.35.25A49.043 49.043 0 0 0 1.75 14.5Z" clip-rule="evenodd" />
+                    </svg>
+                    <p id="sum" class="ml-1.5 self-center">{{ printf "%.2f" .Amount }}</p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{{ end }}
+<style>
+.dropdown-rotate {
+    transition: rotate 350ms ease-out;
+}
+.dropdown-rotate.down {
+    rotate: 90deg;
+}
+.dropdown-rotate.up {
+    rotate: 0deg;
+}
+.dropdown-slide-up {
+    transition-property: transform, height, visibility;
+    transition-duration: 325ms, 460ms, 600ms;
+    transition-delay: 25ms, 200ms, 25ms;
+    transition-timing-function: linear, ease-out, linear;
+    visibility: collapse;
+    height: 0px;
+    transform: translateY(-50px);
+    width: 66.666667%;
+}
+.dropdown-slide-down {
+    transition-property: transform, height, visibility;
+    transition-duration: 420ms, 460ms, 420ms;
+    transition-delay: 25ms, 5ms, 25ms;
+    transition-timing-function: linear, cubic-bezier(.17,.72,.55,.86), linear;
+    visibility: visible;
+    height: 100px;
+    transform: translateY(0px);
+    width: 66.666667%;
+}
+</style>
+
+<script>
+// Function to draw horizontal bar graphs
+function drawHorizontalBarGraph(canvas, amount, budgetAmount) {
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    function drawBorder() {
+        // Draw left.
+        ctx.beginPath();
+        ctx.strokeStyle = 'red';
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, canvas.height);
+        ctx.stroke();
+        // Draw right.
+        ctx.beginPath();
+        ctx.moveTo(canvas.width, 0);
+        ctx.lineTo(canvas.width, canvas.height);
+        ctx.stroke();
+        // Draw bottom.
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height);
+        ctx.lineTo(canvas.width, canvas.height);
+        ctx.stroke();
+        // Draw top.
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(canvas.width, 0);
+        ctx.stroke();
+    }
+
+    function drawGrid() {
+        ctx.beginPath();
+        ctx.strokeStyle = 'black';
+        for (let linePercent = 0.1; linePercent < 0.9; linePercent += 0.1) {
+            ctx.moveTo(canvas.width * linePercent, 0);
+            ctx.lineTo(canvas.width * linePercent, canvas.height);
+            ctx.stroke();
+        }
+    }
+
+    /* Draw the bar. */
+    const barHeight = 40;
+    const barX = 1;
+    const barY = canvas.height / 2 - barHeight / 2; // Center the bar.
+    const used = percentBudgetUsed(amount, budgetAmount);
+    const targetWidth = used > 1 ? canvas.width - 2 : used * canvas.width - 2;
+    let currentWidth = 0;
+    const animationSpeed = 6;
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        currentWidth += animationSpeed;
+        if (currentWidth >= targetWidth) {
+            currentWidth = targetWidth; // Ensure we reach the final width
+        }
+
+        if (used > 1 && (currentWidth >= ((budgetAmount / amount) * canvas.width))) {
+            const percentBudgetOver = budgetAmount / amount;
+            ctx.beginPath();
+            ctx.strokeStyle = 'red';
+            ctx.lineWidth = 3;
+            ctx.moveTo(canvas.width * percentBudgetOver, 0);
+            ctx.lineTo(canvas.width * percentBudgetOver, canvas.height);
+            ctx.stroke();
+            ctx.lineWidth = 1;
+        }
+
+        drawBorder();
+        drawGrid();
+
+        ctx.fillStyle = 'blue';
+        ctx.fillRect(barX, barY, currentWidth, barHeight);
+        if (currentWidth < targetWidth) {
+            window.requestAnimationFrame(animate); // Continue animation
+        }
+    }
+
+    animate();
+}
+
+function percentBudgetUsed(amount, budgetAmount) {
+    if (budgetAmount == 0) {
+        return 1; // If no budget amount is set by the user, fill up the whole graph.
+    }
+    return amount / budgetAmount;
+}
+
+var graphData = [
+    {{ range . }}
+    {
+        "Amount": {{ js .Amount }},
+        "BudgetAmount": {{ js .BudgetAmount }}
+    },
+    {{ end }}
+];
+var canvases = document.querySelectorAll('#graph-canvas');
+canvases.forEach((canvas, index) => {
+    drawHorizontalBarGraph(canvas, graphData[index].Amount, graphData[index].BudgetAmount);
+});
+</script>

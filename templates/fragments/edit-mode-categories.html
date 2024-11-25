@@ -1,0 +1,89 @@
+<div class="col-start-2 grid place-content-end">
+    <button id="read-mode" class="dark:bg-slate-500 hover:dark:bg-slate-600 dark:text-white py-1 px-2 rounded-sm"
+        hx-get="/manage-my-money/read-mode-categories" hx-target="#custom" hx-swap="innerHtml">Read Mode</button>
+</div>
+<div class="col-start-2 col-span-3 justify-self-center">
+    <table id="custom-categories-table"
+        class="table-auto border-separate border-spacing-y-4">
+        <tbody>
+            {{ range $index, $category := .Categories }}
+            {{ if $category.IsUserDefined }}
+            <form hx-post="/manage-my-money/delete-category" hx-target="#custom" hx-swap="innerHtml">
+                <tr>
+                    <td></td>
+                    <td class="border dark:border-slate-500 px-3 py-2 dark:text-slate-300 dark:bg-slate-600"
+                        >
+                        <input id="category-name" name="category-name" type="text" readonly="readonly"
+                        placeholder="{{ $category.Name }}" value="{{ $category.Name }}"
+                        class="px-4 py-2 rounded-sm dark:placeholder:text-slate-300 dark:text-slate-300 dark:bg-slate-600"
+                        >
+                    </td>
+                    <td class="border dark:border-slate-500 px-3 py-2 dark:text-slate-300 dark:bg-slate-600"
+                        >
+                        <input id="category-description" name="category-description" type="text" readonly="readonly"
+                        placeholder="{{ $category.Description }}" value="{{ $category.Description }}"
+                        class="px-4 py-2 rounded-sm dark:placeholder:text-slate-300 dark:text-slate-300 dark:bg-slate-600"
+                        >
+                    </td>
+                    <td class="border dark:border-slate-500 px-3 py-2 dark:text-slate-300 dark:bg-slate-600"
+                        >
+                        <select id="category-color" name="category-color" disabled="disabled"
+                            class="px-2 py-1 rounded-md dark:text-slate-600 dark:bg-slate-200 capitalize">
+                            {{ range $index1, $color := $.Colors }}
+                            {{ if eq $category.Color $color.Color }} 
+                            <option selected value="{{ $color.Id }}">{{ $color.Color }}</option>
+                            {{ else }}
+                            <option value="{{ $color.Id }}">{{ $color.Color }}</option>
+                            {{ end }}
+                            {{ end }}
+                        </select>
+                    </td>
+                    <td>
+                        <button type="submit" class="flex items-center justify-center ml-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                            </svg>
+                        </button>
+                    </td>
+                </tr>
+            </form>
+            {{ end }}
+            {{ end }}
+            <form hx-put="/manage-my-money/add-category" hx-target="#custom" hx-swap="innerHtml">
+                <tr>
+                    <td>
+                        <button type="submit" class="mr-4 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                            </svg>
+                        </button>
+                    </td>
+                    <td class="border dark:border-slate-500 px-3 py-2 dark:text-slate-300 dark:bg-slate-600"
+                        >
+                        <input id="category-name" name="category-name" type="text" placeholder="Category Name"
+                        class="px-4 py-2 rounded-sm dark:placeholder:text-slate-400 dark:text-slate-600 dark:bg-slate-300">
+                    </td>
+                    <td class="border dark:border-slate-500 px-3 py-2 dark:text-slate-300 dark:bg-slate-600"
+                        >
+                        <input id="category-description" name="category-description" type="text" placeholder="Category Description"
+                        class="px-4 py-2 rounded-sm dark:placeholder:text-slate-400 dark:text-slate-600 dark:bg-slate-300">
+                    </td>
+                    <td class="border dark:border-slate-500 px-3 py-2 dark:text-slate-300 dark:bg-slate-600"
+                        >
+                        <select id="category-color" name="category-color"
+                            class="px-2 py-1 rounded-md dark:text-slate-600 dark:bg-slate-200 capitalize">
+                            {{ range .Colors }}
+                            <option value="{{ .Id }}">{{ .Color }}</option>
+                            {{ end }}
+                        </select>
+                    </td>
+                    <td></td>
+                </tr>
+            </form>
+        </tbody>
+    </table>
+</div>
