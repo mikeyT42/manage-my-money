@@ -562,6 +562,18 @@ video {
   visibility: collapse;
 }
 
+.relative {
+  position: relative;
+}
+
+.left-\[350px\] {
+  left: 350px;
+}
+
+.left-\[355px\] {
+  left: 355px;
+}
+
 .z-0 {
   z-index: 0;
 }
@@ -1085,6 +1097,25 @@ video {
 
 .hover\:w-8:hover {
   width: 2rem;
+}
+
+.hover\:cursor-pointer:hover {
+  cursor: pointer;
+}
+
+.hover\:text-slate-200:hover {
+  --tw-text-opacity: 1;
+  color: rgb(226 232 240 / var(--tw-text-opacity));
+}
+
+.hover\:text-slate-300:hover {
+  --tw-text-opacity: 1;
+  color: rgb(203 213 225 / var(--tw-text-opacity));
+}
+
+.hover\:text-slate-400:hover {
+  --tw-text-opacity: 1;
+  color: rgb(148 163 184 / var(--tw-text-opacity));
 }
 
 .hover\:ring-2:hover {
