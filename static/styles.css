@@ -646,10 +646,6 @@ video {
   margin-top: 2rem;
 }
 
-.mb-8 {
-  margin-bottom: 2rem;
-}
-
 .line-clamp-1 {
   overflow: hidden;
   display: -webkit-box;
@@ -717,6 +713,50 @@ video {
   width: 550px;
 }
 
+.w-10 {
+  width: 2.5rem;
+}
+
+.w-\[50px\] {
+  width: 50px;
+}
+
+.w-\[500px\] {
+  width: 500px;
+}
+
+.w-\[100px\] {
+  width: 100px;
+}
+
+.w-\[150px\] {
+  width: 150px;
+}
+
+.w-\[135px\] {
+  width: 135px;
+}
+
+.w-\[125px\] {
+  width: 125px;
+}
+
+.w-\[120px\] {
+  width: 120px;
+}
+
+.w-\[115px\] {
+  width: 115px;
+}
+
+.w-\[110px\] {
+  width: 110px;
+}
+
+.w-\[105px\] {
+  width: 105px;
+}
+
 .flex-initial {
   flex: 0 1 auto;
 }
@@ -741,6 +781,22 @@ video {
 
 .border-spacing-y-4 {
   --tw-border-spacing-y: 1rem;
+  border-spacing: var(--tw-border-spacing-x) var(--tw-border-spacing-y);
+}
+
+.border-spacing-px {
+  --tw-border-spacing-x: 1px;
+  --tw-border-spacing-y: 1px;
+  border-spacing: var(--tw-border-spacing-x) var(--tw-border-spacing-y);
+}
+
+.border-spacing-x-\[6px\] {
+  --tw-border-spacing-x: 6px;
+  border-spacing: var(--tw-border-spacing-x) var(--tw-border-spacing-y);
+}
+
+.border-spacing-y-\[2px\] {
+  --tw-border-spacing-y: 2px;
   border-spacing: var(--tw-border-spacing-x) var(--tw-border-spacing-y);
 }
 

@@ -1,17 +1,18 @@
 <div id="transactions" hx-get="/manage-my-money/edit-mode-transactions?page=1"
     hx-target="this" hx-swap="outerHTML" hx-trigger="bankstatement-upload from:body">
-    <table class="table-auto p-3 border border-separate border-spacing-2 rounded-lg dark:border-slate-500 dark:bg-slate-800">
+    <table class="table-auto border-separate border-spacing-x-[6px] border-spacing-y-[2px] dark:border-slate-500
+        dark:bg-slate-800">
         <thead class="dark:bg-slate-700">
             <tr>
-                <th class="border px-3 py-1 dark:border-slate-600 font-semibold rounded"
+                <th class="border w-[105px] px-3 py-1 dark:border-slate-600 font-semibold"
                     >Amount</th>
-                <th class="border px-3 py-1 dark:border-slate-600 font-semibold rounded"
+                <th class="border px-3 py-1 dark:border-slate-600 font-semibold"
                     >Bank Description</th>
-                <th class="border px-3 py-1 dark:border-slate-600 font-semibold rounded"
+                <th class="border px-3 py-1 dark:border-slate-600 font-semibold"
                     >User Description</th>
-                <th class="border px-3 py-1 dark:border-slate-600 font-semibold rounded"
+                <th class="border px-3 py-1 dark:border-slate-600 font-semibold"
                     >Date</th>
-                <th class="border px-3 py-1 dark:border-slate-600 font-semibold rounded"
+                <th class="border px-3 py-1 dark:border-slate-600 font-semibold"
                     >Category Name</th>
             </tr>
         </thead>
@@ -23,7 +24,7 @@
                     <td style="display: none">
                         <input name="transaction-id" value="{{ $transaction.Id }}"/>
                     </td>
-                    <td class="border dark:border-slate-500 rounded px-3 py-1 dark:text-slate-300 dark:bg-slate-600"
+                    <td class="border dark:border-slate-500 px-3 py-1 dark:text-slate-300 dark:bg-slate-600"
                         >
                         {{ if ge $transaction.Amount.ToFloat 0.0 }}
                             {{ printf "$%.2f" $transaction.Amount.Abs }}
@@ -31,18 +32,18 @@
                             {{ printf "-$%.2f" $transaction.Amount.Abs }}
                         {{ end }}
                     </td>
-                    <td class="border dark:border-slate-500 rounded px-3 py-1 dark:text-slate-300 dark:bg-slate-600"
+                    <td class="border dark:border-slate-500 px-3 py-1 dark:text-slate-300 dark:bg-slate-600"
                         >{{ $transaction.BankDescription }}</td>
-                    <td class="border dark:border-slate-500 rounded px-3 py-1 dark:text-slate-300 dark:bg-slate-600">
+                    <td class="border dark:border-slate-500 px-3 py-1 dark:text-slate-300 dark:bg-slate-600">
                         <input id="user-description-{{$index}}" name="user-description" type="text" placeholder="User Description"
                         class="px-4 py-2 rounded-sm dark:placeholder:text-slate-400 dark:text-slate-600 dark:bg-slate-300"
                         value="{{ $transaction.UserDescription }}">
                     </td>
-                    <td class="border dark:border-slate-500 rounded px-3 py-1 dark:text-slate-300 dark:bg-slate-600">
+                    <td class="border dark:border-slate-500 px-3 py-1 dark:text-slate-300 dark:bg-slate-600">
                         <input id="date-{{$index}}" name="date" type="date" value='{{ $transaction.Date.Format "2006-01-02" }}'
                             class="px-2 py-1 rounded-md dark:text-slate-600 dark:bg-slate-200">
                     </td>
-                    <td class="border dark:border-slate-500 rounded px-3 py-1 dark:text-slate-300 dark:bg-slate-600"
+                    <td class="border dark:border-slate-500 px-3 py-1 dark:text-slate-300 dark:bg-slate-600"
                         >
                         <select id="category-{{$index}}" name="category"
                             class="px-2 py-1 rounded-md dark:text-slate-600 dark:bg-slate-200 capitalize">
