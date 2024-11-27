@@ -36,20 +36,20 @@ const (
 
 // -----------------------------------------------------------------------------
 func (a *Money) UnmarshalCSV(csv string) error {
-	is_negative := strings.HasPrefix(csv, "($")
+	isNegative := strings.HasPrefix(csv, "($")
 
-	var just_number string
-	if is_negative {
+	var justNumber string
+	if isNegative {
 		s, _ := strings.CutPrefix(csv, "($")
 		s1, _ := strings.CutSuffix(s, ")")
-		just_number = "-" + s1
+		justNumber = "-" + s1
 	} else {
 		s, _ := strings.CutPrefix(csv, "$")
-		just_number = s
+		justNumber = s
 	}
-	just_number = strings.ReplaceAll(just_number, ",", "")
+	justNumber = strings.ReplaceAll(justNumber, ",", "")
 
-	f, err := strconv.ParseFloat(just_number, 32)
+	f, err := strconv.ParseFloat(justNumber, 32)
 	if err != nil {
 		return err
 	}
@@ -75,18 +75,18 @@ func (a Money) ToFloat() float32 {
 
 // -----------------------------------------------------------------------------
 func (tt *TransactionType) UnmarshalCSV(csv string) error {
-	var withdrawal_matches = []string{"pos withdrawal", "external withdrawal",
+	var withdrawalMatches = []string{"pos withdrawal", "external withdrawal",
 		"withdrawal", "check", "eft credit", "atm withdrawal",
-        "insufficient funds charge"}
-	var deposit_matches = []string{"deposit", "external deposit", "atm deposit"}
+		"insufficient funds charge"}
+	var depositMatches = []string{"deposit", "external deposit", "atm deposit"}
 
-	for _, dm := range deposit_matches {
+	for _, dm := range depositMatches {
 		if strings.Contains(strings.ToLower(csv), dm) {
 			*tt = Deposit
 			return nil
 		}
 	}
-	for _, wm := range withdrawal_matches {
+	for _, wm := range withdrawalMatches {
 		if strings.Contains(strings.ToLower(csv), wm) {
 			*tt = Withdrawal
 			return nil

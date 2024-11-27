@@ -28,16 +28,16 @@ func Unmarshal(data []byte, bs *BankStatement) error {
 
 // -----------------------------------------------------------------------------
 func (bs *BankStatement) AutoCategorize() {
-	d_to_c := buildDescriptionCategoryMap()
-    const NONE int32 = 1
+	descriptionsToCategories := buildDescriptionCategoryMap()
+	const NONE int32 = 1
 
 	for i := range bs.Transactions {
 		transaction := &bs.Transactions[i]
-        transaction.CategoryId = NONE
-		desc_tokens := strings.Split(transaction.Description, " ")
+		transaction.CategoryId = NONE
+		descTokens := strings.Split(transaction.Description, " ")
 
-		for _, token := range desc_tokens {
-			category, exists := d_to_c[token]
+		for _, token := range descTokens {
+			category, exists := descriptionsToCategories[token]
 			if exists {
 				transaction.CategoryId = category
 				break
@@ -67,7 +67,7 @@ func buildDescriptionCategoryMap() map[string]int32 {
 		"GULF":             10,
 		"CUMBERLAND":       10,
 		"7-ELEVEN":         10,
-        "AMG":              10,
+		"AMG":              10,
 		"CHARLEYS":         11,
 		"RESTAURANT":       11,
 		"WENDY'S":          11,
