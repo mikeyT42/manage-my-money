@@ -115,7 +115,10 @@ func GetCategories() []m.Category {
             is_user_defined 
             from categories c 
             join category_colors cc on c."color"=cc.id`
-	rows, _ := ps.Queryx(q)
+	rows, err := ps.Queryx(q)
+	if err != nil {
+		logE.Print(err)
+	}
 	defer rows.Close()
 
 	var categories []m.Category
@@ -207,7 +210,10 @@ func GetColors() []m.CategoryColor {
 
 	q := `select "color", id
             from category_colors`
-	rows, _ := db.Queryx(q)
+	rows, err := db.Queryx(q)
+    if err != nil {
+        logE.Print(err)
+    }
 	defer rows.Close()
 
 	var colors []m.CategoryColor
@@ -292,11 +298,11 @@ func GetSummaries(month int32, year int32) []m.Summary {
 }
 
 // -----------------------------------------------------------------------------
-func UpdateSummary(category_id int64, has_summary bool, amount float32,
+func UpdateSummary(categoryId int64, hasSummary bool, amount float32,
 	month int32, year int32) {
 	db := ConnectToDB()
 	var sql string
-	if has_summary {
+	if hasSummary {
 		sql = GetUpdateSummarySQL()
 	} else {
 		sql = GetInsertSummarySQL()
@@ -310,7 +316,7 @@ func UpdateSummary(category_id int64, has_summary bool, amount float32,
 	defer stmt.Close()
 
 	_, err = stmt.Exec(map[string]any{
-		"category_id": category_id,
+		"category_id": categoryId,
 		"amount":      amount,
 		"month":       month,
 		"year":        year,

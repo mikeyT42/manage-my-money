@@ -218,7 +218,6 @@ func GetTransactions(w http.ResponseWriter, r *http.Request, t *fs.FS) {
 		"PaginationState": p,
 	}
 
-	log.Println(p)
 	tmpl.Execute(w, data)
 }
 
@@ -241,11 +240,6 @@ func EditTransactionsButton(w http.ResponseWriter, r *http.Request, t *fs.FS) {
 // -----------------------------------------------------------------------------
 func EditTransactions(w http.ResponseWriter, r *http.Request, t *fs.FS) {
 	log.Print("Editing transactions.")
-	r.ParseForm()
-
-	for key, value := range r.Form {
-		fmt.Printf("%s = %s\n", key, value)
-	}
 
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
 	if err != nil {
@@ -295,7 +289,7 @@ func UpdateTransaction(w http.ResponseWriter, r *http.Request, t *fs.FS) {
 	if err != nil {
 		logE.Print(err)
 	}
-	c_id, err := strconv.ParseInt(r.FormValue("category"), 10, 64)
+	categoryId, err := strconv.ParseInt(r.FormValue("category"), 10, 64)
 	if err != nil {
 		logE.Print(err)
 	}
@@ -307,7 +301,7 @@ func UpdateTransaction(w http.ResponseWriter, r *http.Request, t *fs.FS) {
 	transaction := m.Transaction{
 		Id:              int(id),
 		UserDescription: r.FormValue("user-description"),
-		CategoryId:      int(c_id),
+		CategoryId:      int(categoryId),
 		Date:            date,
 	}
 
@@ -352,7 +346,7 @@ func UpdateSummary(w http.ResponseWriter, r *http.Request, t *fs.FS) {
 	if err != nil {
 		logE.Print(err)
 	}
-	has_summary, err := strconv.ParseBool(r.FormValue("has-summary"))
+	hasSummary, err := strconv.ParseBool(r.FormValue("has-summary"))
 	if err != nil {
 		logE.Print(err)
 	}
@@ -365,7 +359,7 @@ func UpdateSummary(w http.ResponseWriter, r *http.Request, t *fs.FS) {
 		logE.Print(err)
 	}
 
-	db.UpdateSummary(category, has_summary, float32(amount), int32(month),
+	db.UpdateSummary(category, hasSummary, float32(amount), int32(month),
 		int32(year))
 	// TODO: Send an event trigger to show a check mark on success.
 }
