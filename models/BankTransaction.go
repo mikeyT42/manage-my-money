@@ -36,17 +36,7 @@ const (
 
 // -----------------------------------------------------------------------------
 func (a *Money) UnmarshalCSV(csv string) error {
-	isNegative := strings.HasPrefix(csv, "($")
-
-	var justNumber string
-	if isNegative {
-		s, _ := strings.CutPrefix(csv, "($")
-		s1, _ := strings.CutSuffix(s, ")")
-		justNumber = "-" + s1
-	} else {
-		s, _ := strings.CutPrefix(csv, "$")
-		justNumber = s
-	}
+	justNumber := strings.ReplaceAll(csv, "$", "")
 	justNumber = strings.ReplaceAll(justNumber, ",", "")
 
 	f, err := strconv.ParseFloat(justNumber, 32)
