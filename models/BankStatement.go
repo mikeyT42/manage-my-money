@@ -52,6 +52,8 @@ func buildDescriptionCategoryMap() map[string]int32 {
 		// Default
 		"LABONNE'S":        13,
 		"SHOPRITE":         13,
+		"NUTMEG WINE":      13,
+		"DOLLAR GENERAL":   13,
 		"*HISVINE":         17,
 		"ORTHOCONNECTICUT": 29,
 		"3GTMS":            29,
